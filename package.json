@@ -1,0 +1,23 @@
+{
+  "name": "nasa-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "npm start --prefix server",
+    "nasa-front-end": "npm start --prefix nasa-front-end",
+    "watch": "concurrently 'npm:server' 'npm:nasa-front-end' "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimmy2156/NASA-PROJECT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jimmy2156/NASA-PROJECT/issues"
+  },
+  "homepage": "https://github.com/jimmy2156/NASA-PROJECT#readme"
+}
