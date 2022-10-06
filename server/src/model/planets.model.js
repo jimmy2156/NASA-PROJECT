@@ -38,10 +38,12 @@ columns: true}))
 
  }
 
-
+function allPlanets() {
+  return habitialPlanet
+}
 
 
 module.exports = {
     loadPlanetData,
-    planets: habitialPlanet
+    allPlanets
 }

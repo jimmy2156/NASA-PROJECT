@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "npm start --prefix server",
     "nasa-front-end": "npm start --prefix nasa-front-end",
-    "watch": "concurrently 'npm:server' 'npm:nasa-front-end' "
+    "watch": "concurrently 'npm:server' 'npm:nasa-front-end' ",
+    "deploy": "npm run build --prefix nasa-front-end && npm watch --prefix server"
   },
   "repository": {
     "type": "git",
