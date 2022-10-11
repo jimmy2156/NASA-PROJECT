@@ -2,9 +2,8 @@
 const fs = require('fs')
 const path = require('path')
 const { parse } = require('csv-parse');
+const planets = require('./planet.mongo')
 
-
-const habitialPlanet = []
 
 function ishabitialPlanets(planet) {
     return planet['koi_disposition'] === 'CONFIRMED'
@@ -19,17 +18,17 @@ function loadPlanetData() {
 fs.createReadStream(path.join(__dirname,'..','..','data','kepler_data.csv'))
   .pipe(parse({comment: '#',
 columns: true}))
-  .on('data', (data) => {
+  .on('data',  (data) => {
     if (ishabitialPlanets(data)) {
-        habitialPlanet.push(data)
-    }
-  })
+        getAllPlanets(data)
+    }})
   .on('error', (err) => {
     console.log(err)
     reject(err)
   })
-  .on('end', () => {
-    console.log(`${habitialPlanet.length} habitable planets found`);
+  .on('end', async () => {
+    const countAllPlanet = (await allPlanets()).length
+    console.log(`${countAllPlanet} habitable planets found`);
   resolve();
    
     })
@@ -38,8 +37,25 @@ columns: true}))
 
  }
 
-function allPlanets() {
-  return habitialPlanet
+async function allPlanets() {
+  return await planets.find({})
+}
+async function getAllPlanets(planet) {
+  try {
+    await planets.updateOne({
+      keplerName: planet.kepler_name
+    },
+    {
+      keplerName: planet.kepler_name
+    },
+    {
+      upsert: true
+    })
+}
+   
+  catch(err) {
+   console.error(`mongo couldnt extract planets ${err}`)
+  }
 }
 
 

@@ -1,10 +1,10 @@
-const { planetLaunches, pLanetPost,  existsLaunchWithId, abortLaunchById} = require('../../model/launches.model');
+const { planetLaunches, planetPost1,  existsLaunchWithId, abortLaunchById} = require('../../model/launches.model');
 
 
-function httpalllaunchingPlanet(req,res) {
-    return res.status(200).json(planetLaunches())
+async function httpalllaunchingPlanet(req,res) {
+    return res.status(200).json(await planetLaunches())
 };
-function httpPostLaunchingPlanet(req,res) {
+async function httpPostLaunchingPlanet(req,res) {
     const launch = req.body;
     if (!launch.mission || !launch.rocket || !launch.target || !launch.launchDate) {
         return res.status(400).json({msg: "missing arguments"})
@@ -13,7 +13,7 @@ function httpPostLaunchingPlanet(req,res) {
     if (isNaN(launch.launchDate)) {
         return res.status(400).json({error: 'Invalid error date'})
     }
-    pLanetPost(launch)
+    await planetPost1(launch)
     res.status(201).json(launch)
 
 }
