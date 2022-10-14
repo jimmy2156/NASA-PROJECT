@@ -33,8 +33,7 @@ const launchSchema = new mongoose.Schema({
         default: true
     },
     target: {
-        type: String,
-        required: true
+        type: String
     }
 })
 

@@ -1,8 +1,11 @@
 const { planetLaunches, planetPost1,  existsLaunchWithId, abortLaunchById} = require('../../model/launches.model');
+const {getPagination} = require('../../services/query')
 
 
 async function httpalllaunchingPlanet(req,res) {
-    return res.status(200).json(await planetLaunches())
+    const {skip, limit} = getPagination(req.query)
+    const launches = await planetLaunches(skip, limit)
+    return res.status(200).json(launches)
 };
 async function httpPostLaunchingPlanet(req,res) {
     const launch = req.body;
@@ -18,15 +21,23 @@ async function httpPostLaunchingPlanet(req,res) {
 
 }
 
-function httpAbortLaunch(req,res) {
+async function httpAbortLaunch(req,res) {
     const launchId = Number(req.params.id);
-    if (!existsLaunchWithId(launchId)) {
+    const existLaunch = await existsLaunchWithId(launchId);
+    if (!existLaunch) {
         return res.status(404).json({
             error: "Id does not exist"
         })
     }
-    const aborted = abortLaunchById(launchId);
-    return res.status(200).json(aborted)
+    const aborted = await abortLaunchById(launchId);
+    if (!aborted) {
+        res.status(400).json({
+            error: "launch not aborted"
+        })
+    }
+    return res.status(200).json({
+        ok: true
+    })
 
 
 }

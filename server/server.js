@@ -1,22 +1,22 @@
 const http = require('http')
-const mongoose = require('mongoose')
+
+const path = require('path')
+const dotenv = require('dotenv')
+dotenv.config({path: './.env'});
 const app = require('./src/app')
 const { loadPlanetData } = require('./src/model/planets.model')
-const PORT = 8000
-const MONGO_URL = 'mongodb+srv://jimmy:21562156@nasacluster.6inp9lf.mongodb.net/nasa?retryWrites=true&w=majority'
+const {loadLaunchData} = require('./src/model/launches.model')
+const {loadingData} = require('./src/services/mongo')
 
-mongoose.connection.once('open',() => {
-console.log('MongoDb is connection ready')
-})
-mongoose.connection.on('error',(err) => {
-console.error(err)
-})
+const PORT = process.env.PORT;
+
 
 const server = http.createServer(app)
 
 async function start() {
-await mongoose.connect(MONGO_URL)
+await loadingData()
 await loadPlanetData()
+await loadLaunchData()
 server.listen(PORT, () => {
     console.log(`Listening at port ${PORT}...`)
 })}
