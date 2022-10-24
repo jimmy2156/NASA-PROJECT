@@ -1,27 +1,27 @@
-const http = require('http')
+// const http = require('http')
 
-const path = require('path')
-const dotenv = require('dotenv')
-dotenv.config({path: './.env'});
-const app = require('./src/app')
-const { loadPlanetData } = require('./src/model/planets.model')
-const {loadLaunchData} = require('./src/model/launches.model')
-const {loadingData} = require('./src/services/mongo')
+// const path = require('path')
+// const dotenv = require('dotenv')
+// dotenv.config({path: './.env'});
+// const app = require('./src/app')
+// const { loadPlanetData } = require('./src/model/planets.model')
+// const {loadLaunchData} = require('./src/model/launches.model')
+// const {loadingData} = require('./src/services/mongo')
 
-const PORT = process.env.PORT;
+// const PORT = process.env.PORT;
 
 
-const server = http.createServer(app)
+// const server = http.createServer(app)
 
-async function start() {
-await loadingData()
-await loadPlanetData()
-await loadLaunchData()
-server.listen(PORT, () => {
-     console.log(`Listening at port ${PORT}...`)
- })}
+// async function start() {
+// await loadingData()
+// await loadPlanetData()
+// await loadLaunchData()
+// server.listen(PORT, () => {
+//      console.log(`Listening at port ${PORT}...`)
+//  })}
 
-start()
+// start()
 // const fs = require('fs')
 // const path = require('path')
 // const https = require('https')
@@ -105,3 +105,42 @@ start()
 //     {key: fs.readFileSync('key.pem'),
 //     cert: fs.readFileSync('cert.pem'), }, app
 // ).listen(PORT, console.log("its listening at 3000....."))
+const express = require('express')
+const app = express()
+const { graphqlHTTP } = require('express-graphql')
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+const { loadFilesSync } = require('@graphql-tools/load-files')
+
+
+const typesArray = loadFilesSync('**/*', {
+    extensions: ['graphql'],
+  });
+
+const schema = makeExecutableSchema({
+    typeDefs: typesArray
+})
+
+
+const root = {
+    products: require('./products/products.model'),
+    orders: require('./orders/orders.model')
+    
+}
+
+
+app.use('/graphql',graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true
+}))
+
+
+
+
+
+
+
+
+app.listen(3000, () => {
+    console.log('Running graphql server...')
+})
