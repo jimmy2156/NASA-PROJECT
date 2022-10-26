@@ -106,8 +106,9 @@
 //     cert: fs.readFileSync('cert.pem'), }, app
 // ).listen(PORT, console.log("its listening at 3000....."))
 const express = require('express')
-const app = express()
-const { graphqlHTTP } = require('express-graphql')
+const path = require('path')
+
+const { ApolloServer } = require('apollo-server-express')
 const { makeExecutableSchema } = require('@graphql-tools/schema')
 const { loadFilesSync } = require('@graphql-tools/load-files')
 
@@ -116,31 +117,36 @@ const typesArray = loadFilesSync('**/*', {
     extensions: ['graphql'],
   });
 
-const schema = makeExecutableSchema({
-    typeDefs: typesArray
-})
+const resolverArray = loadFilesSync('**/*', {
+    extensions: ['resolvers.js'],
+} )
+async function startApolloServer() {
+    const app = express()
+    const schema = makeExecutableSchema({
+        typeDefs: typesArray,
+        resolvers: resolverArray
+    })
+    const server = new ApolloServer({
+        schema
+    })
+    await server.start()
+    server.applyMiddleware({app, path: '/graphql'})
 
-
-const root = {
-    products: require('./products/products.model'),
-    orders: require('./orders/orders.model')
     
-}
-
-
-app.use('/graphql',graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-}))
-
-
-
-
-
-
-
 
 app.listen(3000, () => {
     console.log('Running graphql server...')
 })
+}
+
+
+startApolloServer()
+
+
+
+
+
+
+
+
+
